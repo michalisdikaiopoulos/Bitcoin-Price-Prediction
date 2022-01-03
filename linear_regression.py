@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # ARGS
 LAGS = 1
-N_SPLITS = 5
+N_SPLITS = 5 
 
 # -------------------------------------- STAGE 1 --------------------------------------
 
