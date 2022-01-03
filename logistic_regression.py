@@ -1,5 +1,3 @@
-# TODO : Change the following parameters in logistic model : penalty,
-
 import pandas as pd
 from preprocessing import btc_prices, indices, make_lags
 from sklearn.model_selection import TimeSeriesSplit, train_test_split
@@ -10,14 +8,16 @@ import matplotlib.pyplot as plt
 
 # ARGS
 LAGS = 1
-N_SPLITS = 5
+N_SPLITS = 10
 
-# Features : Increased Lags, Close Lag, Relative Close, Today Potential, Close Difference, Open, High, Low, Volume
+# -------------------------------------- STAGE 1 --------------------------------------
 
-# Store separately features and target variable
+# Store target variable
 y = btc_prices['Increased']
-# X = pd.concat([make_lags(y, lags=LAGS, name='Increased')], axis=1)
-X = btc_prices[['Today Potential']]
+
+# Store features
+X = pd.concat([make_lags(y, lags=LAGS, name='Increased')], axis=1)
+# X = btc_prices[['Today Potential']]
 
 # Normalization
 min_max_scaler = MinMaxScaler()
@@ -31,8 +31,9 @@ logistic_model = LogisticRegression(class_weight='balanced')
 X.drop(index=indices[0:LAGS], axis=0, inplace=True)
 y.drop(index=indices[0:LAGS], axis=0, inplace=True)
 
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, shuffle=False)
+# -------------------------------------- STAGE 2 --------------------------------------
+# Using time series cross validation to find the best model with which we later
+# train our data
 
 average_accuracy = 0
 
@@ -47,21 +48,35 @@ for train, test in tscv.split(X, y):
    plt.plot(btc_prices['Close'].loc[indices[train[LAGS:]]], label='Training set')
    plt.plot(btc_prices['Close'].loc[indices[test]], label='Test set', color='orange')
    plt.show()
-"""
-   #print(btc_prices['Close'].loc[indices[train[LAGS:]]])
+   """
 
    # Train
    logistic_model.fit(X_train, y_train)
 
    # Predict
-   y_probs = logistic_model.predict_proba(X_test)[:, 1]
-   y_pred = y_probs > 0.5
+   y_pred = logistic_model.predict(X_test)
 
-   # Calculate scores and errors
+   """# Calculate scores and errors
    average_accuracy += logistic_model.score(X_test, y_test)
    print("Score : " + str(logistic_model.score(X_test, y_test)))
    print(confusion_matrix(y_test, y_pred, labels=[True, False]))
    print(classification_report(y_test, y_pred, labels=[True, False], zero_division=0))
 
 print(f"Average Accuracy :  {average_accuracy / N_SPLITS}")
+"""
 
+# -------------------------------------- STAGE 3 --------------------------------------
+# Using the optimal model we found in Cross-Validation, we train our model and calculate its accuracy
+
+# Split data for training
+X_train, X_test, y_train, y_test = \
+   train_test_split(X, y, test_size=0.2, train_size=0.8, shuffle=False)
+
+logistic_model.fit(X_train, y_train)
+y_pred = logistic_model.predict(X_test)
+
+# Calculate accuracy, Precision and Recall and showing the confusion matrix
+accuracy = logistic_model.score(X_test, y_test)
+print(f"Logistic Model Accuracy : {accuracy}")
+print(f"\nConfusion Matrix : {confusion_matrix(y_test, y_pred, labels=[True, False])}")
+print(f'\nClassification Report : {classification_report(y_test, y_pred, labels=[True, False], zero_division = 0)}')
