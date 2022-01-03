@@ -67,7 +67,7 @@ pd.set_option('display.max_columns', 20)
 btc_prices = pd.read_csv("resources/BTC-USD.csv")
 # btc_prices = yf.download('BTC-USD', start='2010-12-25', end='2017-09-11')
 
-#Check for NaN values
+# Check for NaN values
 nan_values_sum = btc_prices.isnull().sum() # There are no NaN values
 
 # Set Date as an Index
@@ -94,7 +94,8 @@ btc_corr_table.to_excel("resources/btc_corr_table.xlsx", engine="openpyxl")
 
 # Plot histograms of features to check if they are normally distributed
 
-"""btc_prices.hist(bins=30, figsize=(15, 10))
+"""
+btc_prices.hist(bins=30, figsize=(15, 10))
 plt.savefig("resources/btc_features_distributions.png", dpi = 100)
 
 # Plot daily close price
@@ -102,30 +103,14 @@ btc_prices.plot(y = 'Close', use_index = True)
 plt.savefig("resources/btc_daily_close_price.png", dpi = 100)
 """
 
-# We create two extra features in our dataset
+# -> We create five extra features in our dataset
 # Close Lag shows the previous value of close
 # Increased has True value if price has rised from yesterday (i.e. if Close Lag < Lag), else False
 # Relative Close shows the relative difference between High and Close price from the previous day
+# Today Potential has True value if Open price today is higher than yesterday's Open price, else False
+# Close Difference is the difference between today's and yesterday's Close value
 btc_prices['Close Lag'] = btc_prices['Close'].shift(1)
 btc_prices['Increased'] = np.where(btc_prices['Close'] > btc_prices['Close Lag'], True, False)
 btc_prices['Relative Close'] = ((btc_prices['Close'] - btc_prices['Low']) / (btc_prices['High'] - btc_prices['Low'])).shift(1)
 btc_prices['Today Potential'] = btc_prices['Open'] > btc_prices['Open'].shift(1)
 btc_prices['Close Difference'] = btc_prices['Close'] - btc_prices['Close Lag']
-
-# Add column that has True value if price has rised from yesterday, else False
-# btc_prices['Increased'] = np.where(btc_prices['Close'] > )
-
-# X = btc_prices[['Open', 'High', 'Low', 'Volume']]    # Features
-# y = btc_prices['Close'] # Response Variable
-
-
-
-"""
-Date = pd.Series(btc_prices.index.values)
-Adj_Close = btc_prices['Adj Close']
-
-# Plot needs beautification
-plt.plot(Date, Adj_Close)
-plt.savefig('resources/daily_adj_close.png')
-"""
-
