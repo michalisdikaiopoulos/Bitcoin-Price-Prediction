@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # ARGS
 LAGS = 1
-N_SPLITS = 5 
+N_SPLITS = 5
 
 # -------------------------------------- STAGE 1 --------------------------------------
 
@@ -20,8 +20,8 @@ N_SPLITS = 5
 y = btc_prices['Close']
 
 # Store Features
-# X = make_lags(y, lags=LAGS) # This is the best X when not using same day data
-X = btc_prices[['Open', 'High', 'Low']] # This is the best X when using same day data
+X = make_lags(y, lags=LAGS) # This is the best X when not using same day data
+# X = btc_prices[['Open', 'High', 'Low']] # This is the best X when using same day data
 
 # Normalization
 min_max_scaler = MinMaxScaler()

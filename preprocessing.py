@@ -64,7 +64,8 @@ def spot_outliers(vector):
 pd.set_option('display.max_columns', 20)
 
 # Store Data
-btc_prices = pd.read_csv("resources/BTC-USD.csv")
+# btc_prices = pd.read_csv("resources/BTC-USD.csv")
+btc_prices = pd.read_csv("BTC-USD.csv")
 # btc_prices = yf.download('BTC-USD', start='2010-12-25', end='2017-09-11')
 
 # Check for NaN values
@@ -83,7 +84,7 @@ initial_btc_corr_table = corr_table(btc_prices)
 
 # We notice that close and adjusted close prices have a Pearson correlation of 1, meaning that
 # in the present dataset where Close is supposed to be our response variable we do not need adjusted close
-btc_prices = btc_prices.drop(columns="Adj Close")
+# btc_prices = btc_prices.drop(columns="Adj Close")
 
 # Store indices
 indices = btc_prices.index

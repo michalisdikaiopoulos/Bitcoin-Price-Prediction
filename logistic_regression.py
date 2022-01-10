@@ -16,7 +16,7 @@ N_SPLITS = 10
 y = btc_prices['Increased']
 
 # Store features
-X = pd.concat([make_lags(y, lags=LAGS, name='Increased')], axis=1)
+X = pd.concat([make_lags(y, lags=LAGS, name='Increased'), btc_prices[['Relative Close', 'Today Potential']]], axis=1)
 # X = btc_prices[['Today Potential']]
 
 # Normalization
@@ -47,8 +47,8 @@ for train, test in tscv.split(X, y):
    plt.title('Bitcoin Prices Train and Test Sets', size=20)
    plt.plot(btc_prices['Close'].loc[indices[train[LAGS:]]], label='Training set')
    plt.plot(btc_prices['Close'].loc[indices[test]], label='Test set', color='orange')
-   plt.show()
-   """
+   plt.show()"""
+
 
    # Train
    logistic_model.fit(X_train, y_train)
@@ -62,8 +62,8 @@ for train, test in tscv.split(X, y):
    print(confusion_matrix(y_test, y_pred, labels=[True, False]))
    print(classification_report(y_test, y_pred, labels=[True, False], zero_division=0))
 
-print(f"Average Accuracy :  {average_accuracy / N_SPLITS}")
-"""
+print(f"Average Accuracy :  {average_accuracy / N_SPLITS}")"""
+
 
 # -------------------------------------- STAGE 3 --------------------------------------
 # Using the optimal model we found in Cross-Validation, we train our model and calculate its accuracy
